@@ -5,9 +5,20 @@ float yaw = 0.0;
 float pitch = 0.0;
 float roll = 0.0;
 
+float yaw2 = 0.0;
+float pitch2 = 0.0;
+float roll2 = 0.0;
+
+
+float yaw3 = 0.0;
+float pitch3 = 0.0;
+float roll3 = 0.0;
+
+
+
 void setup()
 {
-  size(600, 500, P3D);
+  size(1400, 500, P3D);
 
   // if you have only ONE serial port active
   myPort = new Serial(this, Serial.list()[0], 9600); // if you have only ONE serial port active
@@ -30,7 +41,6 @@ void draw()
   translate(width/2, height/2); // set position to centre
 
   pushMatrix(); // begin object
-
   float c1 = cos(radians(roll));
   float s1 = sin(radians(roll));
   float c2 = cos(radians(pitch));
@@ -46,12 +56,67 @@ void draw()
 
   popMatrix(); // end of object
 
+
+/*
+  translate(0, 0); // set position to centre
+
+
+  pushMatrix(); // begin object
+  float c11 = cos(radians(roll2));
+  float s11 = sin(radians(roll2));
+  float c22 = cos(radians(pitch2));
+  float s22 = sin(radians(pitch2));
+  float c33 = cos(radians(yaw2));
+  float s33 = sin(radians(yaw2));
+  applyMatrix( c22*c33, s11*s33+c11*c33*s22, c33*s11*s22-c11*s33, 0,
+               -s22, c11*c22, c22*s11, 0,
+               c22*s33, c11*s22*s33-c33*s11, c11*c33+s11*s22*s33, 0,
+               0, 0, 0, 1);
+
+
+  drawArduino2();
+  popMatrix(); // end of object
+
+
+
+  pushMatrix(); // begin object
+  float c111 = cos(radians(roll2));
+  float s111 = sin(radians(roll2));
+  float c222 = cos(radians(pitch2));
+  float s222 = sin(radians(pitch2));
+  float c333 = cos(radians(yaw2));
+  float s333 = sin(radians(yaw2));
+  applyMatrix( c222*c333, s111*s333+c111*c333*s222, c333*s111*s222-c111*s333, 0,
+               -s222, c111*c222, c222*s111, 0,
+               c222*s333, c111*s222*s333-c333*s111, c111*c333+s111*s222*s333, 0,
+               0, 0, 0, 1);
+
+
+  drawArduino3();
+  popMatrix(); // end of object
+*/
+
+
   // Print values to console
   print(roll);
   print("\t");
   print(pitch);
   print("\t");
   print(yaw);
+  print("\t");
+  print("\t");
+  print(roll2);
+  print("\t");
+  print(pitch2);
+  print("\t");
+  print(yaw2);
+  print("\t");
+  print("\t");
+  print(roll3);
+  print("\t");
+  print(pitch3);
+  print("\t");
+  print(yaw3);
   println();
 }
 
@@ -63,10 +128,22 @@ void serialEvent()
     message = myPort.readStringUntil(newLine); // read from port until new line
     if (message != null) {
       String[] list = split(trim(message), " ");
-      if (list.length >= 4 && list[0].equals("Orientation:")) {
+//      if (list.length >= 4 && list[0].equals("Orientation:")) {
+//      if (list.length >= 4 && list[0].equals("CalmanFilter:")) {
+      if (list.length >= 4 && list[0].equals("MadgwickAHRS:")) {
         yaw = float(list[1]); // convert to float yaw
         pitch = float(list[2]); // convert to float pitch
         roll = float(list[3]); // convert to float roll
+      }
+      else if (list.length >= 4 && list[0].equals("CalmanFilter:")) {
+        yaw2 = float(list[1]); // convert to float yaw
+        pitch2 = float(list[2]); // convert to float pitch
+        roll2 = float(list[3]); // convert to float roll
+      }
+      else if (list.length >= 4 && list[0].equals("Orientation:")) {
+        yaw3 = float(list[1]); // convert to float yaw
+        pitch3 = float(list[2]); // convert to float pitch
+        roll3 = float(list[3]); // convert to float roll
       }
     }
   } while (message != null);
@@ -85,6 +162,33 @@ void drawArduino()
   translate(60, -10, 90); // set position to edge of Arduino box
   box(170, 20, 10); // draw pin header as box
 
-  translate(-20, 0, -180); // set position to other edge of Arduino box
+  translate(-20, 0, -180); // set position to   other edge of Arduino box
   box(210, 20, 10); // draw other pin header as box
+
+}
+
+
+void drawArduino2()
+{
+  int offset = 270;
+  
+  /* function contains shape(s) that are rotated with the IMU */
+  translate(60+offset, 0, 0); // set position to edge of Arduino box
+  stroke(0, 90, 90); // set outline colour to darker teal
+  fill(0, 130, 130); // set fill colour to lighter teal
+  box(300, 10, 200); // draw Arduino board base shape
+
+}
+
+
+void drawArduino3()
+{
+  int offset = -270;
+  
+  /* function contains shape(s) that are rotated with the IMU */
+  translate(-60+offset, 0, 0); // set position to edge of Arduino box
+  stroke(0, 90, 90); // set outline colour to darker teal
+  fill(0, 130, 130); // set fill colour to lighter teal
+  box(300, 10, 200); // draw Arduino board base shape
+
 }
